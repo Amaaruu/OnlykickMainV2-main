@@ -1,0 +1,22 @@
+.product-detail-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-detail-info h2 {
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+.product-detail-info .lead {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.product-detail-price {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #d9534f;
+}

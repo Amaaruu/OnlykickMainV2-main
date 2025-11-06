@@ -1,0 +1,10 @@
+.nav-link-atom {
+    color: rgba(0, 0, 0, 0.55);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: color 0.15s ease-in-out;
+}
+
+.nav-link-atom:hover {
+    color: #d9534f;
+}

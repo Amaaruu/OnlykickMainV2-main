@@ -1,0 +1,13 @@
+.footer-link {
+    color: #adb5bd;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.footer-link:hover {
+    color: #ffffff; /* El color cambia a blanco al pasar el mouse */
+}
+
+.heart-icon {
+    color: red;
+}

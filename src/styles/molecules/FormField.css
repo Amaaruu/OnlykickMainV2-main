@@ -1,0 +1,16 @@
+/*Campo de formulario*/
+.form-field {
+    margin-bottom: 1rem;
+}
+
+.form-field-label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-field-error {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}

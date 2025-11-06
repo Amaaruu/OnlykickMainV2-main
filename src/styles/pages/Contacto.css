@@ -1,0 +1,8 @@
+.contact-card {
+    background-color: #fcfcfc;
+    border: none;
+}
+
+.contact-card .card-body {
+    padding: 2rem;
+}
