@@ -6,7 +6,7 @@ import '../../styles/atoms/Logo.css';
 function Logo() {
     return (
         <Link to="/">
-            <img src="/img/logoOnlyKick.jpg.webp" alt="Logo OnlyKick" className="app-logo" />
+            <img src="/img/logoOnlyKick.webp" alt="Logo OnlyKick" className="app-logo" />
         </Link>
     );
 }
