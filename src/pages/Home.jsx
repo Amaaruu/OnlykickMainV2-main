@@ -1,8 +1,9 @@
 import React from 'react'; 
-import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { productos } from '../data/products.js'; 
 import ProductCard from '../components/molecules/ProductCard'; 
+import HeroCarousel from '../components/organisms/HeroCarousel.jsx';
 import '../styles/pages/Home.css';
 
 function Home({ addToCart }) { 
@@ -10,31 +11,7 @@ function Home({ addToCart }) {
 
   return (
     <>
-      {/* Carrusel de Imagenes */}
-      <Carousel interval={3000} pause={false}>
-        <Carousel.Item>
-          <img
-            className="d-block w-100 carousel-image"
-            src="/img/jordan-fondo.webp"
-            alt="Fondo Jordan"
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100 carousel-image"
-            src="/img/BASKETABALL,BLANCO Y NEGRO.webp.jpg"
-            alt="Jugador de Basketball"
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100 carousel-image carousel-image-centered"
-            src="/img/FlightJordan.webp"
-            alt="Logo Flight Jordan"
-          />
-        </Carousel.Item>
-      </Carousel>
-
+      <HeroCarousel /> {/* Usamos el organismo HeroCarousel */}
       <Container className="my-5">
         {/* Banner Principal */}
         <Row className="align-items-center main-banner">

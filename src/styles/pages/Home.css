@@ -1,14 +1,3 @@
-/*Estilo para las imagenes del carrusel*/
-.carousel-image {
-    height: 500px;
-    object-fit: cover;
-}
-
-/*imagen FlightJordan, centramos la imagen*/
-.carousel-image-centered {
-    object-position: center;
-}
-
 /*Estilos para el banner principal*/
 .main-banner {
     background-color: #f8f9fa;
