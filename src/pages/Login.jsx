@@ -24,7 +24,7 @@ function Login() {
       alert("Inicio de sesion exitoso");
       reset();
 
-      //redirigimos al usuario a la pagina principal
+      //rediri
       Navigate("/");
     } catch (error) {
       console.error("Error durante el inicio de sesion:", error);
@@ -49,10 +49,12 @@ function Login() {
                   errors={errors}
                   validationRules={{ 
                     required: "El correo es obligatorio",
+                    /*
                     pattern: {
                       value: /@duocuc\.cl$|@profesor\.duoc\.cl$/,
                       message: "El correo debe ser @duocuc.cl o @profesor.duoc.cl"
                     } 
+                    */
                   }}
                   placeholder="tu@correo.com"
                 />

@@ -31,14 +31,17 @@ export function AuthProvider({ children }) {
             data: {
                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
                 user: {
-                    name: "Admin Principal",
+                    name: "Isaac (Admin)",
                     email: email,
                     rol: "admin"
                 }
             }
-        }
+        };
 
-    }
+        setToken(response.data.token);
+        setUser(response.data.user);
+
+    };
 
     const logout = () => {
         setUser(null);
