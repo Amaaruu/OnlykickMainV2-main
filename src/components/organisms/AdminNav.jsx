@@ -1,4 +1,3 @@
-// src/components/organisms/AdminNav.jsx
 import React from 'react';
 import { Nav } from 'react-bootstrap';
 import NavLink from '../atoms/NavLink.jsx'; // Usamos tu átomo
