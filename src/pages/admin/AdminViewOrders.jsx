@@ -1,0 +1,12 @@
+import React from "react";
+
+function AdminViewOrders() {
+  return (
+    <div>
+      <h1>Ver Órdenes</h1>
+      <p>Aquí puedes ver todas las órdenes realizadas por los clientes.</p>
+    </div>
+  );
+}
+
+export default AdminViewOrders;

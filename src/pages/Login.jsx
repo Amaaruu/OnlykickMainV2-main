@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import FormField from '../components/molecules/FormField.jsx';
 import Button from '../components/atoms/Button.jsx';
 import '../styles/pages/Login.css';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // su funcion es un componente funcional de React que representa una pagina de inicio de sesion
 // utiliza varios componentes y bibliotecas para crear un formulario de inicio de sesion con validacion
@@ -12,11 +14,22 @@ import '../styles/pages/Login.css';
 // y componentes personalizados para los campos del formulario y el boton
 function Login() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const {login} = useAuth();
+  const Navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    alert('¡Inicio de sesión exitoso!');
-    reset();
+  const onSubmit =  async (data) => {
+    try {
+      // llamamos a la funcion de login del contexto de autenticacion
+      await login(data.email, data.password);
+      alert("Inicio de sesion exitoso");
+      reset();
+
+      //redirigimos al usuario a la pagina principal
+      Navigate("/");
+    } catch (error) {
+      console.error("Error durante el inicio de sesion:", error);
+      alert("Fallo en el inicio de sesion. Por favor, verifica tus credenciales.");
+    }
   };
 
   return (
