@@ -1,4 +1,5 @@
 import React from "react";
+import '../../styles/pages/admin/AdminManageProducts.css';
 
 function AdminManageProducts() {
   return (

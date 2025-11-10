@@ -1,4 +1,5 @@
 import React from "react";
+import '../../styles/pages/admin/AdminViewOrders.css';
 
 function AdminViewOrders() {
   return (

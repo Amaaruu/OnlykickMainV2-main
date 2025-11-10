@@ -2,7 +2,7 @@ import React from 'react';
 import { Button as BootstrapButton } from 'react-bootstrap'; // Usamos el de bootstrap por el estilo outline
 import Image from '../../components/atoms/Image.jsx';
 import Text from '../../components/atoms/Text.jsx';
-import '../../styles/molecules/CartSummary.css';
+import '../../styles/molecules/CartItemRow.css';
 
 // Su funcion es representar una fila de item en el carrito
 // Recibe el item y la funcion para removerlo
