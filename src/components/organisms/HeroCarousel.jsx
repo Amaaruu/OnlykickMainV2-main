@@ -17,7 +17,7 @@ function HeroCarousel() {
       <Carousel.Item>
         <Image
           className="d-block w-100 carousel-image"
-          src="/img/BASKETABALL,BLANCO Y NEGRO.webp.jpg"
+          src="/img/BASKETABALL,BLANCO Y NEGRO.webp"
           alt="Jugador de Basketball"
         />
       </Carousel.Item>
