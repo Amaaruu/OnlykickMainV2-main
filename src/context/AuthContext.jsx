@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
             data: {
                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
                 user: {
-                    name: "Isaac (Admin)",
+                    nombre: "Isaac (Admin)",
                     email: email,
                     rol: "admin"
                 }
