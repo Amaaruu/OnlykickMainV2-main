@@ -1,4 +1,4 @@
-import React from 'react'; // <--- ¡AÑADE ESTA LÍNEA AQUÍ!
+import React from 'react'; 
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Button from '../atoms/Button.jsx'; 

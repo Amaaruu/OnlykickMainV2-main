@@ -17,7 +17,7 @@ describe('Pruebas para el Átomo: Logo', () => {
     //Encuentra la imagen por su texto alternativo (con mayúsculas).
     const logoImage = screen.getByAltText('Logo OnlyKick');
 
-    expect(logoImage.getAttribute('src')).toBe('/img/logoOnlyKick.jpg.webp');
+    expect(logoImage.getAttribute('src')).toBe('/img/logoOnlyKick.webp');
     expect(logoImage.className).toContain('app-logo');
   });
 

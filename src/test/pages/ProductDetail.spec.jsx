@@ -1,47 +1,43 @@
-import React from 'react'; // <--- ¡AÑADE ESTA LÍNEA AQUÍ!
-import { Container, Row, Col, Image, Button, Alert } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
-import { productos } from '../../data/products.js';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import ProductDetail from '../../pages/ProductDetail'; 
+import '@testing-library/jasmine-dom';
 
-function ProductDetail({ addToCart }) {
-  const { id } = useParams();
-  const producto = productos.find(p => p.id === parseInt(id));
+describe('Pruebas para la Página: ProductDetail', () => {
 
-  if (!producto) {
-    return (
-      <Container className="my-5 text-center">
-        <Alert variant="danger">
-          <h4>Producto no encontrado</h4>
-          <p>El producto que buscas no existe o ha sido eliminado.</p>
-          <Link to="/productos">
-            <Button variant="primary">Volver al catálogo</Button>
-          </Link>
-        </Alert>
-      </Container>
+  const mockAddToCart = jasmine.createSpy('addToCart');
+
+  it('debería mostrar "Producto no encontrado" si el ID no existe', () => {
+    // Renderizamos el componente en una ruta que no existe (ID 999)
+    render(
+      <MemoryRouter initialEntries={['/producto/999']}>
+        <Routes>
+          <Route path="/producto/:id" element={<ProductDetail addToCart={mockAddToCart} />} />
+        </Routes>
+      </MemoryRouter>
     );
-  }
 
-  return (
-    <Container className="my-5">
-      <Row className="align-items-center">
-        <Col md={6} className="text-center mb-4 mb-md-0">
-          <Image src={producto.imagen} alt={producto.nombre} className="product-detail-image" />
-        </Col>
-        <Col md={6} className="product-detail-info">
-          <h2>{producto.nombre}</h2>
-          <p className="lead">{producto.descripcion}</p>
-          <h3 className="my-3 product-detail-price">
-            ${producto.precio.toLocaleString('es-CL')}
-          </h3>
-          <div className="d-grid gap-2">
-            <Button variant="danger" size="lg" onClick={() => addToCart(producto)}>
-              Añadir al Carrito
-            </Button>
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  );
-}
+    // Verificamos que se muestre el mensaje de alerta
+    expect(screen.getByText(/Producto no encontrado/i)).toBeTruthy();
+  });
 
-export default ProductDetail;
+  it('debería mostrar los detalles de un producto existente', () => {
+    // Renderizamos el componente en una ruta que SÍ existe (ID 1)
+    render(
+      <MemoryRouter initialEntries={['/producto/1']}>
+        <Routes>
+          <Route path="/producto/:id" element={<ProductDetail addToCart={mockAddToCart} />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Verificamos que muestre el nombre del producto 1
+    // (Según tu data/products.js)
+    expect(screen.getByText('Nike Air Force 1 "Low"')).toBeTruthy();
+    
+    // Verificamos que muestre el precio
+    expect(screen.getByText('$89.990')).toBeTruthy();
+  });
+
+});
