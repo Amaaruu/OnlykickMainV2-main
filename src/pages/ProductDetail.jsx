@@ -1,40 +1,52 @@
-import React from 'react';
-import { Container, Row, Col, Image, Button, Alert } from 'react-bootstrap';
-import { useParams, Link, useMatch } from 'react-router-dom';
-import { productos } from '../data/products.js';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Image, Button, Alert, Spinner } from 'react-bootstrap';
+import { useParams, Link } from 'react-router-dom';
+import { apiCall } from '../services/api'; // <-- Importar API
+import { adaptarProducto } from '../services/adapters'; // <-- Importar adaptador
 import '../styles/pages/ProductDetail.css';
 
-// Recibimos la función addToCart desde App.jsx
 function ProductDetail({ addToCart }) {
-  // useParams() devuelve un objeto con los parametros, en nuestro caso { id: '...' }
   const { id } = useParams();
+  const [producto, setProducto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  // Buscar prodcuto por ID
-  // Buscamos en el array 'productos' el primer producto cuyo 'id' coincida.
-  const producto = productos.find(p => p.id === parseInt(id));
+  useEffect(() => {
+    const fetchOneProduct = async () => {
+      try {
+        setLoading(true);
+        // Llama al endpoint GET /productos/{id}
+        const data = await apiCall(`/productos/${id}`);
+        if (data) {
+            setProducto(adaptarProducto(data));
+        }
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOneProduct();
+  }, [id]); 
 
-  //Manejo del caso donde no se encuentra el producto
-  // Si no se encuentra ningun producto, mostramos un mensaje de error.
-  if (!producto) {
+  if (loading) return <Container className="text-center my-5"><Spinner animation="border" /></Container>;
+
+  if (error || !producto) {
     return (
       <Container className="my-5 text-center">
         <Alert variant="danger">
           <h4>Producto no encontrado</h4>
-          <p>El producto que buscas no existe o ha sido eliminado.</p>
-          <Link to="/productos">
-            <Button variant="primary">Volver al catálogo</Button>
-          </Link>
+          <Link to="/productos"><Button variant="primary">Volver al catálogo</Button></Link>
         </Alert>
       </Container>
     );
   }
 
-  //Si se encuentra el producto, mostramos sus detalles
   return (
     <Container className="my-5">
       <Row className="align-items-center">
         <Col md={6} className="text-center mb-4 mb-md-0">
-          <Image src={producto.imagen} alt={producto.nombre} className="product-detail-image" />
+          <Image src={producto.imagen} alt={producto.nombre} className="product-detail-image" fluid />
         </Col>
         <Col md={6} className="product-detail-info">
           <h2>{producto.nombre}</h2>

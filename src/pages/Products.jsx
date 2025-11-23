@@ -1,19 +1,49 @@
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import { productos } from '../data/products.js';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import ProductCard from '../components/molecules/ProductCard.jsx';
+// Importamos los nuevos servicios
+import { apiCall } from '../services/api';
+import { adaptarProducto } from '../services/adapters'; 
 
-// su funcion es renderizar la pagina de productos y pasar la funcion addToCart al componente ProductCard
-// Pasamos la función 'addToCart' como prop desde el componente padre (App.js) a este componente Products
-// Luego, la pasamos nuevamente como prop al componente ProductCard para que pueda utilizarla cuando se haga clic en el botón "Agregar al carrito"
 function Products({ addToCart }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        // Llama al endpoint GET /productos
+        const dataBackend = await apiCall('/productos');
+        
+        // Adaptamos y guardamos los productos
+        const productosAdaptados = Array.isArray(dataBackend) 
+            ? dataBackend.map(adaptarProducto) 
+            : [];
+
+        setProducts(productosAdaptados);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+        setError("No se pudieron cargar los productos. Revisa la conexión al backend.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <Container className="my-5 text-center"><Spinner animation="border" /></Container>;
+  if (error) return <Container className="my-5"><Alert variant="danger">{error}</Alert></Container>;
+
   return (
     <Container className="my-5">
       <h1 className="text-center mb-4">Todos Nuestros Productos</h1>
       <Row xs={1} sm={2} lg={4} className="g-4">
-        {productos.map(producto => (
-          <Col key={producto.id}>
-            {/*Pasamos la función 'addToCart' hacia el componente ProductCard.*/}
+        {products.map(producto => (
+          // Usamos producto.id, que es adaptado de producto.idProducto
+          <Col key={producto.id}> 
             <ProductCard producto={producto} addToCart={addToCart} />
           </Col>
         ))}

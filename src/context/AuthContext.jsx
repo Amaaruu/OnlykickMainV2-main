@@ -1,66 +1,82 @@
 import React, { createContext, useState, useContext, useEffect} from "react";
-import { data } from "react-router-dom";
-// importamos el servicio de usuario
+// Importamos el nuevo servicio API
+import { apiCall } from "../services/api"; 
 
-// 2. Creamos el contexto
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+    // Mantenemos 'token' pero el backend de Java solo devuelve 'user'
+    const [token, setToken] = useState(() => localStorage.getItem("token") || null); 
 
     useEffect(() => {
-    // Si hay un token, podrías validar si sigue vigente
-    // y cargar los datos del usuario.
-    // Por ahora, solo guardamos el token en localStorage.
-    if (token) {
-      localStorage.setItem('token', token);
-      // Aquí deberías decodificar el token o hacer una llamada a /me
-      // para obtener los datos del usuario y su rol.
-      // Ejemplo (simplificado):
-      // const decodedUser = jwt_decode(token); 
-      // setUser(decodedUser);
-    } else {
-      localStorage.removeItem('token');
-    }
-    }, [token]);
+        const userStored = localStorage.getItem('user');
+        if (userStored) {
+            setUser(JSON.parse(userStored));
+        }
+    }, []);
 
     const login = async (email, password) => {
-
-        const response = {
-            data: {
-                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-                user: {
-                    nombre: "Isaac (Admin)",
-                    email: email,
-                    rol: "admin"
-                }
-            }
+        const body = { 
+            email: email, 
+            // Mapeamos 'password' a 'passwordHash'
+            passwordHash: password 
         };
 
-        setToken(response.data.token);
-        setUser(response.data.user);
-
+        try {
+            // Llama al endpoint POST /usuarios/login
+            const usuarioBackend = await apiCall('/usuarios/login', 'POST', body);
+            
+            if (usuarioBackend) {
+                // Guarda el objeto usuario retornado por Spring Boot
+                setUser(usuarioBackend);
+                localStorage.setItem('user', JSON.stringify(usuarioBackend));
+                
+                // Nota: Si implementas JWT, aquí actualizarías el token.
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Login error:", error);
+            throw error; 
+        }
     };
+
+    const registerUser = async (userData) => {
+        const body = {
+            // Mapeamos 'nombre' a 'nombreUsuario'
+            nombreUsuario: userData.nombre, 
+            email: userData.email,
+            passwordHash: userData.password // Mapeamos password a passwordHash
+        };
+
+        try {
+            // Llama al endpoint POST /usuarios/registro
+            await apiCall('/usuarios/registro', 'POST', body);
+            return true;
+        } catch (error) {
+            console.error("Registro error:", error);
+            throw error;
+        }
+    }
 
     const logout = () => {
         setUser(null);
-        setToken(null);
+        localStorage.removeItem('user');
     }
 
     const value = {
         user,
-        token,
+        token, 
         login,
+        registerUser,
         logout,
         isAuthenticated: !!user
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-
 }
 
-// 3. Creamos un hook para usar el contexto
 export function useAuth() {
     return useContext(AuthContext);
 }
