@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../../context/AuthContext';
+import {QH} from '../../context/AuthContext'; // Asegúrate de importar AuthProvider correctamente
 import Login from '../../pages/Login';
+import { AuthProvider } from '../../context/AuthContext';
 
 describe('Login Page', () => {
   it('debería renderizar el formulario de login', async () => {
@@ -14,17 +15,19 @@ describe('Login Page', () => {
       </BrowserRouter>
     );
 
-    // Asegúrate de que los campos estén renderizados correctamente
-    const emailInput = await screen.findByPlaceholderText(/Correo Electrónico/i);
-    const passwordInput = await screen.findByPlaceholderText(/Contraseña/i);
-    const loginButton = await screen.findByText(/Iniciar sesión/i);
+    // CORRECCIÓN: Buscamos por LabelText porque "Correo Electrónico" es el label, no el placeholder
+    const emailInput = screen.getByLabelText(/Correo Electrónico/i);
+    const passwordInput = screen.getByLabelText(/Contraseña/i);
+    
+    // CORRECCIÓN: El botón dice "Ingresar", no "Iniciar sesión" (ese es el título h1)
+    const loginButton = screen.getByRole('button', { name: /Ingresar/i });
 
     expect(emailInput).toBeTruthy();
     expect(passwordInput).toBeTruthy();
     expect(loginButton).toBeTruthy();
   });
 
-  it('debería mostrar un mensaje de error si las credenciales son incorrectas', async () => {
+  it('debería interactuar con los campos correctamente', async () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -33,17 +36,19 @@ describe('Login Page', () => {
       </BrowserRouter>
     );
 
-    // Interactúa con los campos de texto
-    const emailInput = await screen.findByPlaceholderText(/Correo Electrónico/i);
-    const passwordInput = await screen.findByPlaceholderText(/Contraseña/i);
-    const loginButton = await screen.findByText(/Iniciar sesión/i);
+    const emailInput = screen.getByLabelText(/Correo Electrónico/i);
+    const passwordInput = screen.getByLabelText(/Contraseña/i);
+    const loginButton = screen.getByRole('button', { name: /Ingresar/i });
 
+    // Simulamos escribir credenciales incorrectas
     fireEvent.change(emailInput, { target: { value: 'wrong-email@gmail.com' } });
     fireEvent.change(passwordInput, { target: { value: 'somepassword' } });
+    
+    // Hacemos click en el botón correcto
     fireEvent.click(loginButton);
 
-    // Ahora el comportamiento de desarrollo acepta cualquier correo, por lo que
-    // no debe aparecer el mensaje de error. Verificamos que no exista.
+    // Nota: Como tu AuthContext actual (mock) siempre hace login exitoso,
+    // el test original verificaba que el error fuera NULL. Mantenemos esa lógica.
     await waitFor(() => {
       const errorMessage = screen.queryByText(/Fallo en el inicio de sesión/);
       expect(errorMessage).toBeNull();
@@ -59,19 +64,17 @@ describe('Login Page', () => {
       </BrowserRouter>
     );
 
-    // Simula el llenado del formulario con credenciales válidas
-    const emailInput = await screen.findByPlaceholderText(/Correo Electrónico/i);
-    const passwordInput = await screen.findByPlaceholderText(/Contraseña/i);
-    const loginButton = await screen.findByText(/Iniciar sesión/i);
+    const emailInput = screen.getByLabelText(/Correo Electrónico/i);
+    const passwordInput = screen.getByLabelText(/Contraseña/i);
+    const loginButton = screen.getByRole('button', { name: /Ingresar/i });
 
     fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'correctpassword' } });
     fireEvent.click(loginButton);
 
-    // Espera que la redirección ocurra correctamente
+    // Esperamos que no ocurra ningún error visual tras el login exitoso
     await waitFor(() => {
-      // Aquí puedes verificar que la navegación haya ocurrido, por ejemplo,
-      // que se haya hecho un `navigate("/home")` o algo similar
+        expect(screen.queryByText(/Fallo en el inicio/i)).toBeNull();
     });
   });
 });
