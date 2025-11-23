@@ -5,27 +5,42 @@ import FormField from '../components/molecules/FormField.jsx';
 import Button from '../components/atoms/Button.jsx';
 import '../styles/pages/Registro.css';
 
-// componente funcional de React que representa la pagina de registro de usuario
-// utiliza React Hook Form para la gestion y validación del formulario
-// incluye campos para nombre, correo electronico, contraseña y confirmación de contraseña
-// aplica estilos personalizados desde un archivo CSS especifico para esta página
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
+
 function Registro() {
   const { register, handleSubmit, formState: { errors }, reset, getValues } = useForm();
+  
+  // OBTENEMOS LA FUNCIÓN registerUser DEL CONTEXTO
+  const { registerUser } = useAuth();
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log({ nombre: data.nombre, email: data.email }); 
-    alert('¡Registro exitoso!');
-    reset();
+  // MODIFICAMOS LA FUNCIÓN ONSUBMIT PARA QUE SEA ASÍNCRONA Y LLAME AL BACKEND
+  const onSubmit = async (data) => {
+    try {
+      // Llamamos a la función real que se comunica con Spring Boot
+      await registerUser(data);
+      
+      alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+      reset();
+      // Redirigir al login para que el usuario entre
+      navigate('/login');
+      
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      alert('Hubo un error al registrar el usuario. Intenta nuevamente.');
+    }
   };
 
   return (
     <Container className="my-5">
-      <Row className="justify-content-center">
+        <Row className="justify-content-center">
         <Col md={8} lg={6}>
           <Card className="shadow-sm registro-card">
             <Card.Body className="p-4">
               <h1 className="text-center mb-4">Registro de Usuario</h1>
               <form onSubmit={handleSubmit(onSubmit)}>
+                {/* ... tus campos FormField ... */}
                 <FormField
                   label="Nombre Completo"
                   name="nombre"

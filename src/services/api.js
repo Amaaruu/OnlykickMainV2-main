@@ -31,7 +31,13 @@ export const apiCall = async (endpoint, method = 'GET', body = null, token = nul
     if (response.status === 204) return null;
 
     const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      console.warn("la respuesta no es JSON:", text);
+      data = { message: text, error: text };
+    }
 
     if (!response.ok) {
       // Manejo de errores 4xx o 5xx (ej: 401 Credenciales inválidas)
