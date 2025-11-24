@@ -38,7 +38,7 @@ function NavBar({ cartItemCount }) {
               // Si está logueado
               <>
                 {/* Saludamos al usuario */}
-                <span className="me-2 mb-2 mb-lg-0">Hola, {user.nombre}</span>
+                <span className="me-2 mb-2 mb-lg-0">Hola, {user.nombreUsuario}</span>
                 <BootstrapButton 
                   variant="outline-secondary" 
                   onClick={logout} 
