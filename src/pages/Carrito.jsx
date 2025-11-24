@@ -112,4 +112,4 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
   );
 }
 
-export default Carrito;
+export default Carrito; 
