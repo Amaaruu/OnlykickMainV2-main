@@ -1,7 +1,7 @@
 import React from 'react';
 import { Carousel } from 'react-bootstrap';
-import Image from '../atoms/Image.jsx'; // Importamos el atomo de IMAGE
-import '../../styles/organisms/HeroCarousel.css'; // Importamos el css propio del organismo
+import Image from '../atoms/Image.jsx'; 
+import '../../styles/organisms/HeroCarousel.css'; 
 
 // organismo de carrusel
 function HeroCarousel() {

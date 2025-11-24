@@ -7,7 +7,7 @@ import NavLink from '../atoms/NavLink.jsx';
 import Button from '../atoms/Button.jsx';
 import { useAuth } from '../../context/AuthContext'; 
 
-// Recibimos 'onLogout' desde App.jsx
+
 function NavBar({ cartItemCount, onLogout }) { 
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import NavLink from '../atoms/NavLink.jsx'; // Usamos tu átomo
+import NavLink from '../atoms/NavLink.jsx'; 
 import '../../styles/organisms/AdminNav.css';
 
 function AdminNav() {

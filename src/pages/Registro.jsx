@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import FormField from '../components/molecules/FormField.jsx';
 import Button from '../components/atoms/Button.jsx';
 import '../styles/pages/Registro.css';
-
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 

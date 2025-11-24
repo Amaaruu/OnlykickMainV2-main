@@ -76,8 +76,6 @@ function App() {
             path="/carrito" 
             element={<Carrito cartItems={cartItems} removeFromCart={removeFromCart} />} 
           />
-          {/* AQUI IRIA MIS COMPRAS, PERFIL, ETC */}
-          {/* <Route path="/mi-perfil" element={<Profile />} /> */}
 
           {/* --- Capa 2: Rutas de Administrador (Solo Admin) --- */}
           <Route path="/admin" element={<ProtectedRouteAdmin />}>

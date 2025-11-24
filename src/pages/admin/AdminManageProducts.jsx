@@ -76,7 +76,6 @@ function AdminManageProducts() {
   const handleShowEdit = (product) => {
     setEditingProduct(product);
     // Rellenamos el formulario con los datos existentes
-    // Nota: Dependiendo de tu backend, las relaciones pueden venir como objetos (ej: producto.categoria.idCategoria)
     setFormData({
       nombreProducto: product.nombreProducto,
       descripcion: product.descripcion,

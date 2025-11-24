@@ -3,8 +3,8 @@ import { Container, Row, Col, Button, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/molecules/ProductCard';
 import HeroCarousel from '../components/organisms/HeroCarousel.jsx';
-import { apiCall } from '../services/api'; // Importamos servicio API
-import { adaptarProducto } from '../services/adapters'; // Importamos adaptador
+import { apiCall } from '../services/api'; 
+import { adaptarProducto } from '../services/adapters'; 
 import '../styles/pages/Home.css';
 
 function Home({ addToCart }) {
@@ -24,7 +24,6 @@ function Home({ addToCart }) {
           const adaptados = data.map(adaptarProducto);
           
           // 3. Tomamos solo los primeros 4 para "Destacados"
-          // (Podrías usar .reverse() antes de .slice() si quieres ver los más nuevos)
           setProductosDestacados(adaptados.slice(0, 4));
         } else {
           setProductosDestacados([]);

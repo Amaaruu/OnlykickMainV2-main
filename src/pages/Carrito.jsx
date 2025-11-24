@@ -38,8 +38,6 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
     }));
 
     // 4. Construcción del objeto Venta completo
-    // Nota: idDireccion, idEstado, etc. están fijos en 1. 
-    // Asegúrate de haber corrido el script SQL que te envié para que existan.
     const ventaPayload = {
         usuario: { idUsuario: user.idUsuario },
         direccion: { idDireccion: 1 }, 
@@ -57,7 +55,7 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
         if (response) {
             alert(`¡Compra realizada con éxito! ID Orden: ${response.idVenta}`);
             
-            // Si pasaste la función clearCart desde App.jsx, la usamos aquí
+            // Limpiar el carrito
             if (clearCart) clearCart(); 
             
             // Redirigir al home o historial

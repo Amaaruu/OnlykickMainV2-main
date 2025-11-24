@@ -24,7 +24,7 @@ function Login() {
       alert("Inicio de sesion exitoso");
       reset();
 
-      //rediri
+      // redirigimos al usuario a la pagina principal
       Navigate("/");
     } catch (error) {
       console.error("Error durante el inicio de sesion:", error);

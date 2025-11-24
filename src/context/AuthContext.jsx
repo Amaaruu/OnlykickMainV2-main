@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect} from "react";
-// Importamos el nuevo servicio API
 import { apiCall } from "../services/api"; 
 
 const AuthContext = createContext();
@@ -32,7 +31,6 @@ export function AuthProvider({ children }) {
                 setUser(usuarioBackend);
                 localStorage.setItem('user', JSON.stringify(usuarioBackend));
                 
-                // Nota: Si implementas JWT, aquí actualizarías el token.
                 return true;
             }
             return false;

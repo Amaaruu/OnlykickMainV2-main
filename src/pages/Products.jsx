@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import ProductCard from '../components/molecules/ProductCard.jsx';
-// Importamos los nuevos servicios
 import { apiCall } from '../services/api';
 import { adaptarProducto } from '../services/adapters'; 
 
