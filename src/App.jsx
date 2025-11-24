@@ -37,6 +37,12 @@ function App() {
     alert(`"${product.nombre}" fue añadido al carrito.`);
   };
 
+  //Función para vaciar el carrito.
+  const clearCart = () => {
+  setCartItems([]);
+  localStorage.removeItem('cartItems');
+  };
+
   // Función para eliminar un producto del carrito (la usaremos más adelante).
   const removeFromCart = (productId) => {
     setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
@@ -46,7 +52,10 @@ function App() {
   return (
     //Pasamos la cantidad de items al NavBar como un prop
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <NavBar cartItemCount={cartItems.length} />
+      <NavBar 
+        cartItemCount={cartItems.length}
+        onLogout={clearCart}
+      />
       
       <main style={{ flex: 1 }}>
         <Routes>

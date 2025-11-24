@@ -1,17 +1,25 @@
 import React from 'react';
 import { Container, Navbar as BootstrapNavbar, Nav } from 'react-bootstrap';
 import { Button as BootstrapButton } from 'react-bootstrap'; 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../atoms/Logo.jsx';
 import NavLink from '../atoms/NavLink.jsx';
 import Button from '../atoms/Button.jsx';
-import { useAuth } from '../../context/AuthContext'; // <--- 1. IMPORTAR EL HOOK
+import { useAuth } from '../../context/AuthContext'; 
 
-// su funcion es un navbar
-// que contiene enlaces de navegacion y botones de login y registro
-function NavBar({ cartItemCount }) { 
-  // 2. OBTENER EL ESTADO DE AUTENTICACIÓN Y DATOS DEL USUARIO
+// Recibimos 'onLogout' desde App.jsx
+function NavBar({ cartItemCount, onLogout }) { 
   const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // Función que combina cerrar sesión y limpiar carrito
+  const handleLogout = () => {
+    logout();           // Borra el usuario del contexto/localStorage
+    if (onLogout) {
+        onLogout();     // Borra los items del carrito visualmente
+    }
+    navigate('/login'); // Redirige al login
+  };
 
   return (
     <BootstrapNavbar bg="white" expand="lg" className="shadow-sm">
@@ -26,29 +34,24 @@ function NavBar({ cartItemCount }) {
             <NavLink to="/blogs">Blogs</NavLink>
             <NavLink to="/contacto">Contacto</NavLink>
 
-            {/* 3. ENLACE CONDICIONAL PARA EL ADMIN */}
             {isAuthenticated && user.rol === 'admin' && (
               <NavLink to="/admin">Panel Admin</NavLink>
             )}
           </Nav>
 
           <Nav className="align-items-center">
-            {/* 4. LÓGICA CONDICIONAL PARA BOTONES DE LOGIN/LOGOUT */}
             {isAuthenticated ? (
-              // Si está logueado
               <>
-                {/* Saludamos al usuario */}
                 <span className="me-2 mb-2 mb-lg-0">Hola, {user.nombreUsuario}</span>
                 <BootstrapButton 
                   variant="outline-secondary" 
-                  onClick={logout} 
+                  onClick={handleLogout} 
                   className="me-2 mb-2 mb-lg-0"
                 >
                   Cerrar Sesión
                 </BootstrapButton>
               </>
             ) : (
-              // Si NO está logueado
               <>
                 <BootstrapButton as={Link} to="/login" variant="outline-danger" className="me-2 mb-2 mb-lg-0">
                   Iniciar Sesión
@@ -59,7 +62,6 @@ function NavBar({ cartItemCount }) {
               </>
             )}
             
-            {/* El botón del carrito se mantiene igual */}
             <Link to="/carrito" style={{ textDecoration: 'none' }}>
               <Button>
                   🛒 Carrito ({cartItemCount})
