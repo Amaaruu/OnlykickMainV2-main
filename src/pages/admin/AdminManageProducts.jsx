@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal, Form, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { apiCall } from '../../services/api';
+// Importamos el nuevo componente de imagen (Asegúrate de crearlo en el paso 2)
+import AdminProductoImagen from '../../components/molecules/AdminProductoImagen';
 
 function AdminManageProducts() {
   const [products, setProducts] = useState([]);
@@ -47,7 +49,10 @@ function AdminManageProducts() {
         apiCall('/generos')
       ]);
 
-      setProducts(prodData || []);
+      // Ordenamos productos por ID descendente para ver los nuevos arriba
+      const sortedProducts = (prodData || []).sort((a, b) => b.idProducto - a.idProducto);
+
+      setProducts(sortedProducts);
       setCategorias(catData || []);
       setMarcas(marcData || []);
       setMateriales(matData || []);
@@ -97,7 +102,6 @@ function AdminManageProducts() {
     e.preventDefault();
     try {
       // Construimos el objeto payload que espera Spring Boot
-      // Spring Boot espera objetos anidados para las relaciones
       const payload = {
         nombreProducto: formData.nombreProducto,
         descripcion: formData.descripcion,
@@ -115,7 +119,7 @@ function AdminManageProducts() {
       } else {
         // CREAR (POST)
         await apiCall('/productos', 'POST', payload);
-        alert('Producto creado correctamente');
+        alert('Producto creado correctamente. Ahora puedes editarlo para agregar la imagen.');
       }
       
       handleClose();
@@ -154,6 +158,7 @@ function AdminManageProducts() {
         <thead>
           <tr>
             <th>ID</th>
+            <th>Imagen</th>
             <th>Nombre</th>
             <th>Precio</th>
             <th>Categoría</th>
@@ -165,6 +170,18 @@ function AdminManageProducts() {
           {products.map((prod) => (
             <tr key={prod.idProducto}>
               <td>{prod.idProducto}</td>
+              <td>
+                {/* Mostramos miniatura si existe, si no un placeholder */}
+                {prod.imagenes && prod.imagenes.length > 0 ? (
+                    <img 
+                        src={prod.imagenes[0].urlImagen} 
+                        alt="prod" 
+                        style={{width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px'}}
+                    />
+                ) : (
+                    <span className="text-muted small">Sin img</span>
+                )}
+              </td>
               <td>{prod.nombreProducto}</td>
               <td>${prod.precioBase?.toLocaleString()}</td>
               <td>{prod.categoria?.nombreCategoria || '-'}</td>
@@ -188,6 +205,7 @@ function AdminManageProducts() {
           <Modal.Title>{editingProduct ? 'Editar Producto' : 'Crear Nuevo Producto'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {/* A. FORMULARIO DE TEXTO */}
           <Form onSubmit={handleSubmit}>
             <Row>
               <Col md={6}>
@@ -279,9 +297,26 @@ function AdminManageProducts() {
 
             <div className="d-flex justify-content-end mt-4">
               <Button variant="secondary" onClick={handleClose} className="me-2">Cancelar</Button>
-              <Button variant="primary" type="submit">Guardar</Button>
+              <Button variant="primary" type="submit">Guardar Datos</Button>
             </div>
           </Form>
+
+          {/* B. SECCIÓN DE IMÁGENES (SOLO VISIBLE AL EDITAR) */}
+          {editingProduct && (
+            <div className="mt-5 border-top pt-4 bg-light p-3 rounded">
+                <h5 className="mb-3">📸 Gestionar Imagen</h5>
+                
+                {/* Componente Modular para Subir Imagen */}
+                <AdminProductoImagen 
+                    idProducto={editingProduct.idProducto} 
+                    onUploadSuccess={() => {
+                        // Refrescamos la data para que se vea la nueva imagen en la tabla de fondo
+                        fetchAllData(); 
+                    }}
+                />
+            </div>
+          )}
+
         </Modal.Body>
       </Modal>
     </Container>
