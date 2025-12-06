@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Badge, Alert, Spinner } from 'react-bootstrap';
 import { apiCall } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import '../../styles/pages/admin/AdminDashboard.css';
+import '../../styles/pages/admin/AdminDashboard.css'; 
 
 function AdminDashboard() {
   const { user: currentUser } = useAuth(); // Para no borrarnos a nosotros mismos
