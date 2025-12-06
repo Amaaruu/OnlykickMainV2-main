@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Image, Button, Alert, Spinner, Form } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { apiCall } from '../services/api';
 import { adaptarProducto } from '../services/adapters';
+import { useCart } from '../context/CartContext'; 
 import '../styles/pages/ProductDetail.css';
 
-function ProductDetail({ addToCart }) {
+function ProductDetail() {
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
   const [tallasDisponibles, setTallasDisponibles] = useState([]);
-  const [selectedInventarioId, setSelectedInventarioId] = useState(''); // Guardamos el ID del inventario directo
+  const [selectedInventarioId, setSelectedInventarioId] = useState('');
+  
+  const { addToCart } = useCart(); // Obtener función del contexto
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -18,14 +21,11 @@ function ProductDetail({ addToCart }) {
     const fetchInfo = async () => {
       try {
         setLoading(true);
-        // 1. Cargar info del producto
         const prodData = await apiCall(`/productos/${id}`);
         if (prodData) setProducto(adaptarProducto(prodData));
 
-        // 2. Cargar inventario para saber qué tallas hay
         const invData = await apiCall(`/inventario/producto/${id}`);
         if (invData && Array.isArray(invData)) {
-            // Filtramos solo los que tienen stock > 0
             setTallasDisponibles(invData.filter(item => item.stock > 0));
         }
       } catch (err) {
@@ -43,10 +43,8 @@ function ProductDetail({ addToCart }) {
         alert("Por favor selecciona una talla");
         return;
     }
-    // Buscamos el objeto inventario seleccionado
     const itemInv = tallasDisponibles.find(inv => inv.id_inventario === parseInt(selectedInventarioId));
     
-    // Añadimos al carrito pasando los IDs reales de Talla y Color
     addToCart({
         ...producto,
         selectedTallaId: itemInv.talla.idTalla,

@@ -5,31 +5,27 @@ import CartItemRow from '../components/molecules/CartItemRow.jsx';
 import CartSummary from '../components/molecules/CartSummary.jsx';
 import '../styles/pages/Carrito.css';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useCart } from '../context/CartContext.jsx'; 
 import { apiCall } from '../services/api';
 
-function Carrito({ cartItems, removeFromCart, clearCart }) {
-  // Calculamos el total
-  const subtotal = cartItems.reduce((sum, item) => sum + item.precio, 0);
+function Carrito() {
+  const { cartItems, removeFromCart, clearCart, cartTotal } = useCart(); 
   
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleCheckout = async () => {
-    // 1. Validación de usuario
     if (!isAuthenticated || !user) {
       alert("Debes iniciar sesión para comprar.");
       navigate("/login");
       return;
     }
 
-    // 2. Validación de carrito vacío
     if (cartItems.length === 0) {
       alert("Tu carrito está vacío.");
       return;
     }
 
-    // 3. Construcción de los productos para la venta
-    // AQUI ESTA LA CLAVE: Usamos selectedTallaId si existe, sino 1.
     const productosVenta = cartItems.map(item => ({
         producto: { idProducto: item.id },
         talla: { idTalla: item.selectedTallaId || 1 },   
@@ -37,7 +33,6 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
         cantidad: 1 
     }));
 
-    // 4. Construcción del objeto Venta completo
     const ventaPayload = {
         usuario: { idUsuario: user.idUsuario },
         direccion: { idDireccion: 1 }, 
@@ -45,25 +40,19 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
         metodoPago: { idMetodoPago: 1 }, 
         metodoEnvio: { idMetodoEnvio: 1 }, 
         productosVenta: productosVenta,
-        totalVenta: subtotal
+        totalVenta: cartTotal // Usamos el total del contexto
     };
 
     try {
-        // 5. Llamada al Backend
         const response = await apiCall('/ventas', 'POST', ventaPayload);
         
         if (response) {
             alert(`¡Compra realizada con éxito! ID Orden: ${response.idVenta}`);
-            
-            // Limpiar el carrito
-            if (clearCart) clearCart(); 
-            
-            // Redirigir al home o historial
+            clearCart(); 
             navigate('/'); 
         }
     } catch (error) {
         console.error("Error en la compra:", error);
-        // Mensaje de error más amigable
         if (error.message && error.message.includes("No hay stock")) {
             alert("Error: " + error.message);
         } else {
@@ -92,7 +81,6 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
                <tbody>
                 {cartItems.map((item, index) => (
                   <CartItemRow 
-                    // Usamos index como fallback para la key si hay items repetidos
                     key={`${item.id}-${index}`}
                     item={item} 
                     removeFromCart={removeFromCart} 
@@ -103,11 +91,11 @@ function Carrito({ cartItems, removeFromCart, clearCart }) {
           )}
         </Col>
         <Col md={4}>
-          <CartSummary subtotal={subtotal} onCheckout={handleCheckout} />
+          <CartSummary subtotal={cartTotal} onCheckout={handleCheckout} />
         </Col>
       </Row>
     </Container>
   );
 }
 
-export default Carrito; 
+export default Carrito;

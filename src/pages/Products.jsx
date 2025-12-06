@@ -3,20 +3,21 @@ import { Container, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import ProductCard from '../components/molecules/ProductCard.jsx';
 import { apiCall } from '../services/api';
 import { adaptarProducto } from '../services/adapters'; 
+import { useCart } from '../context/CartContext'; 
 
-function Products({ addToCart }) {
+function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const { addToCart } = useCart(); 
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Llama al endpoint GET /productos
         const dataBackend = await apiCall('/productos');
         
-        // Adaptamos y guardamos los productos
         const productosAdaptados = Array.isArray(dataBackend) 
             ? dataBackend.map(adaptarProducto) 
             : [];
@@ -41,7 +42,6 @@ function Products({ addToCart }) {
       <h1 className="text-center mb-4">Todos Nuestros Productos</h1>
       <Row xs={1} sm={2} lg={4} className="g-4">
         {products.map(producto => (
-          // Usamos producto.id, que es adaptado de producto.idProducto
           <Col key={producto.id}> 
             <ProductCard producto={producto} addToCart={addToCart} />
           </Col>

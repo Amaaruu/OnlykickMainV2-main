@@ -6,19 +6,17 @@ import Logo from '../atoms/Logo.jsx';
 import NavLink from '../atoms/NavLink.jsx';
 import Button from '../atoms/Button.jsx';
 import { useAuth } from '../../context/AuthContext'; 
+import { useCart } from '../../context/CartContext'; 
 
-
-function NavBar({ cartItemCount, onLogout }) { 
+function NavBar() { 
   const { user, isAuthenticated, logout } = useAuth();
+  const { cartCount, clearCart } = useCart(); // Usamos el contexto
   const navigate = useNavigate();
 
-  // Función que combina cerrar sesión y limpiar carrito
   const handleLogout = () => {
-    logout();           // Borra el usuario del contexto/localStorage
-    if (onLogout) {
-        onLogout();     // Borra los items del carrito visualmente
-    }
-    navigate('/login'); // Redirige al login
+    logout();
+    clearCart(); // Limpiamos el carrito al cerrar sesión
+    navigate('/login');
   };
 
   return (
@@ -64,7 +62,7 @@ function NavBar({ cartItemCount, onLogout }) {
             
             <Link to="/carrito" style={{ textDecoration: 'none' }}>
               <Button>
-                  🛒 Carrito ({cartItemCount})
+                  🛒 Carrito ({cartCount})
               </Button>
             </Link>
           </Nav>
