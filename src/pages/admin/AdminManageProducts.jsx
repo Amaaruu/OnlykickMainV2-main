@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal, Form, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { apiCall } from '../../services/api';
 import '../../styles/pages/admin/AdminManageProducts.css';
-// Importamos el nuevo componente de imagen (Asegúrate de crearlo en el paso 2)
+
 import AdminProductoImagen from '../../components/molecules/AdminProductoImagen';
+import AdminInventario from '../../components/molecules/AdminInventario';
 
 function AdminManageProducts() {
   const [products, setProducts] = useState([]);
@@ -316,6 +317,11 @@ function AdminManageProducts() {
                     }}
                 />
             </div>
+          )}
+
+          {/* C. SECCIÓN DE INVENTARIO / STOCK (SOLO VISIBLE AL EDITAR) */}
+          {editingProduct && (
+             <AdminInventario idProducto={editingProduct.idProducto} />
           )}
 
         </Modal.Body>

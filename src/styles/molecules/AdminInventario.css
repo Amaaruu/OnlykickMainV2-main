@@ -1,0 +1,32 @@
+/* Contenedor principal de la gestión de stock */
+.admin-inventario-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* El formulario de agregar stock */
+.stock-form-container {
+    background-color: #f8f9fa; /* bg-light de Bootstrap */
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+/* La bolita de color visual en la tabla */
+.color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil para colores claros como blanco */
+    vertical-align: middle;
+}
+
+/* Badge de cantidad */
+.stock-badge {
+    font-size: 0.9rem !important; /* Forzamos un poco el tamaño si Bootstrap lo pisa */
+    min-width: 60px;
+}
