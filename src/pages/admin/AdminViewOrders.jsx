@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
 import { apiCall } from '../../services/api';
+import '../../styles/pages/admin/AdminViewOrders.css';
 
 function AdminViewOrders() {
   const [orders, setOrders] = useState([]);

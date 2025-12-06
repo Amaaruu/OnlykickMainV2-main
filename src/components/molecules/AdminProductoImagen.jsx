@@ -98,7 +98,7 @@ const AdminProductoImagen = ({ idProducto, onUploadSuccess }) => {
                     onClick={handleUpload} 
                     disabled={!file || loading}
                 >
-                    {loading ? 'Guardando...' : 'Guardar Imagen'}
+                    {loading ? 'Guardando...' : 'Guardar'}
                 </Button>
             </div>
             
