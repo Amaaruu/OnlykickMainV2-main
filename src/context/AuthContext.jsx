@@ -5,31 +5,37 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    // Mantenemos 'token' pero el backend de Java solo devuelve 'user'
     const [token, setToken] = useState(() => localStorage.getItem("token") || null); 
 
     useEffect(() => {
+        // Al cargar la app, intentamos recuperar el usuario del localStorage
         const userStored = localStorage.getItem('user');
-        if (userStored) {
+        const tokenStored = localStorage.getItem('token');
+        
+        if (userStored && tokenStored) {
             setUser(JSON.parse(userStored));
+            setToken(tokenStored);
         }
     }, []);
 
     const login = async (email, password) => {
         const body = { 
             email: email, 
-            // Mapeamos 'password' a 'passwordHash'
             passwordHash: password 
         };
 
         try {
-            // Llama al endpoint POST /usuarios/login
-            const usuarioBackend = await apiCall('/usuarios/login', 'POST', body);
+            // El backend ahora devuelve: { token: "...", user: { idUsuario: 1, rol: "admin", ... } }
+            const response = await apiCall('/usuarios/login', 'POST', body);
             
-            if (usuarioBackend) {
-                // Guarda el objeto usuario retornado por Spring Boot
-                setUser(usuarioBackend);
-                localStorage.setItem('user', JSON.stringify(usuarioBackend));
+            if (response && response.token && response.user) {
+                // 1. Guardamos el Token
+                localStorage.setItem("token", response.token);
+                setToken(response.token);
+
+                // 2. Guardamos el Usuario
+                setUser(response.user);
+                localStorage.setItem('user', JSON.stringify(response.user));
                 
                 return true;
             }
@@ -42,14 +48,12 @@ export function AuthProvider({ children }) {
 
     const registerUser = async (userData) => {
         const body = {
-            // Mapeamos 'nombre' a 'nombreUsuario'
             nombreUsuario: userData.nombre, 
             email: userData.email,
-            passwordHash: userData.password // Mapeamos password a passwordHash
+            passwordHash: userData.password
         };
 
         try {
-            // Llama al endpoint POST /usuarios/registro
             await apiCall('/usuarios/registro', 'POST', body);
             return true;
         } catch (error) {
@@ -60,7 +64,9 @@ export function AuthProvider({ children }) {
 
     const logout = () => {
         setUser(null);
+        setToken(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
     }
 
     const value = {
@@ -69,7 +75,7 @@ export function AuthProvider({ children }) {
         login,
         registerUser,
         logout,
-        isAuthenticated: !!user
+        isAuthenticated: !!user // Es true si 'user' tiene datos
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

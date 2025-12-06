@@ -6,15 +6,19 @@ const API_URL = import.meta.env.VITE_API_URL;
  * @param {string} endpoint - La ruta específica de la API (ej: '/productos').
  * @param {string} [method='GET'] - Método HTTP (GET, POST, PUT, PATCH, DELETE).
  * @param {object} [body=null] - Cuerpo de la petición.
- * @param {string} [token=null] - Token de autenticación JWT (actualmente no usado por tu backend).
+ * @param {string} [token=null] - Token opcional (si no se pasa, intenta leerlo del localStorage).
  */
 export const apiCall = async (endpoint, method = 'GET', body = null, token = null) => {
   const headers = {
     'Content-Type': 'application/json',
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`; 
+  // 1. Buscamos el token: O viene por parámetro, o lo sacamos del localStorage
+  const authToken = token || localStorage.getItem('token');
+
+  // 2. Si existe, lo agregamos al Header Authorization
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`; 
   }
 
   const config = {
@@ -30,6 +34,13 @@ export const apiCall = async (endpoint, method = 'GET', body = null, token = nul
     // Si la respuesta es 204 No Content, devolvemos null
     if (response.status === 204) return null;
 
+    // Si la sesión expiró (403 o 401), podríamos limpiar el token automáticamente (opcional)
+    if (response.status === 401 || response.status === 403) {
+       console.warn("Acceso denegado o sesión expirada");
+       // Opcional: localStorage.removeItem('token'); 
+       // Opcional: window.location.href = '/login';
+    }
+
     const text = await response.text();
     let data;
     try {
@@ -40,8 +51,7 @@ export const apiCall = async (endpoint, method = 'GET', body = null, token = nul
     }
 
     if (!response.ok) {
-      // Manejo de errores 4xx o 5xx (ej: 401 Credenciales inválidas)
-      throw new Error(data.message || data.error || data || `Error ${response.status} en la petición.`);
+      throw new Error(data.message || data.error || `Error ${response.status}: ${JSON.stringify(data)}`);
     }
     
     return data;

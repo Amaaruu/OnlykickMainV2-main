@@ -3,7 +3,6 @@ import { Form, Button, ProgressBar, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { apiCall } from '../../services/api';
 
-
 const CLOUD_NAME = "dmnsdi1rn"; 
 const UPLOAD_PRESET = "onlykick_preset"; 
 
@@ -29,7 +28,29 @@ const AdminProductoImagen = ({ idProducto, onUploadSuccess }) => {
         formData.append("upload_preset", UPLOAD_PRESET);
 
         try {
-            // 1. Subir a Cloudinary
+            //Limpieza - Borrar imágenes antiguas
+            try {
+                const oldImages = await apiCall(`/imagenes/producto/${idProducto}`);
+                console.log("Imágenes antiguas encontradas:", oldImages); // 🔍 DEBUG
+
+                if (oldImages && Array.isArray(oldImages)) {
+                    for (const img of oldImages) {
+                        // Intentamos leer el ID de varias formas posibles para asegurar que lo encontramos
+                        const idBorrar = img.id_imagen || img.idImagen || img.id; 
+                        
+                        if (idBorrar) {
+                            console.log(`Borrando imagen ID: ${idBorrar}`); // 🔍 DEBUG
+                            await apiCall(`/imagenes/${idBorrar}`, 'DELETE');
+                        } else {
+                            console.warn("No se pudo encontrar el ID de la imagen:", img);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Error al intentar borrar imágenes antiguas (continuando subida...):", err);
+            }
+
+            //Subir a Cloudinary
             const res = await axios.post(
                 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
                 formData,
@@ -43,7 +64,7 @@ const AdminProductoImagen = ({ idProducto, onUploadSuccess }) => {
 
             const imageUrl = res.data.secure_url;
 
-            // 2. Guardar URL en Backend OnlyKick
+            //Guardar en Backend
             const payload = {
                 urlImagen: imageUrl,
                 altText: "Foto Producto",
@@ -52,13 +73,14 @@ const AdminProductoImagen = ({ idProducto, onUploadSuccess }) => {
 
             await apiCall('/imagenes', 'POST', payload);
 
-            setMessage({ type: 'success', text: '¡Imagen guardada con éxito!' });
+            setMessage({ type: 'success', text: '¡Imagen actualizada con éxito!' });
             setFile(null);
             setUploadProgress(0);
+            
             if (onUploadSuccess) onUploadSuccess();
 
         } catch (error) {
-            console.error(error);
+            console.error("Error crítico:", error);
             setMessage({ type: 'danger', text: 'Error al subir la imagen.' });
         } finally {
             setLoading(false);
@@ -76,7 +98,7 @@ const AdminProductoImagen = ({ idProducto, onUploadSuccess }) => {
                     onClick={handleUpload} 
                     disabled={!file || loading}
                 >
-                    {loading ? 'Subiendo...' : 'Subir'}
+                    {loading ? 'Guardando...' : 'Guardar Imagen'}
                 </Button>
             </div>
             
