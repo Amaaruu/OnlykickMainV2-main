@@ -26,6 +26,8 @@ function Carrito() {
       return;
     }
 
+    // Mapeamos los items para enviarlos al backend según lo que espera VentaService.
+    // Nota: El backend usa idProducto, idTalla, idColor para verificar stock.
     const productosVenta = cartItems.map(item => ({
         producto: { idProducto: item.id },
         talla: { idTalla: item.selectedTallaId || 1 },   
@@ -35,12 +37,12 @@ function Carrito() {
 
     const ventaPayload = {
         usuario: { idUsuario: user.idUsuario },
-        direccion: { idDireccion: 1 }, 
+        direccion: { idDireccion: 1 }, // ID fijo por ahora, idealmente vendría de un selector
         estadoVenta: { idEstado: 1 }, 
         metodoPago: { idMetodoPago: 1 }, 
         metodoEnvio: { idMetodoEnvio: 1 }, 
         productosVenta: productosVenta,
-        totalVenta: cartTotal // Usamos el total del contexto
+        totalVenta: cartTotal 
     };
 
     try {
@@ -79,11 +81,13 @@ function Carrito() {
                  </tr>
                </thead>
                <tbody>
-                {cartItems.map((item, index) => (
+                {cartItems.map((item) => (
                   <CartItemRow 
-                    key={`${item.id}-${index}`}
+                    // Usamos el ID único generado en el contexto como key
+                    key={item.cartItemId}
                     item={item} 
-                    removeFromCart={removeFromCart} 
+                    // Pasamos una función que llama a removeFromCart con el ID único específico
+                    removeFromCart={() => removeFromCart(item.cartItemId)} 
                   />
                 ))}
               </tbody>

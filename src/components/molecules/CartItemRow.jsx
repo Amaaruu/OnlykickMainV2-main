@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button as BootstrapButton } from 'react-bootstrap'; // Usamos el de bootstrap por el estilo outline
+import { Button as BootstrapButton } from 'react-bootstrap'; 
 import Image from '../../components/atoms/Image.jsx';
 import Text from '../../components/atoms/Text.jsx';
 import '../../styles/molecules/CartItemRow.css';
 
-// Su funcion es representar una fila de item en el carrito
-// Recibe el item y la funcion para removerlo
+// Su función es representar una fila de item en el carrito
+// Recibe el item y la función ya preparada para removerlo
 function CartItemRow({ item, removeFromCart }) {
     return (
         <tr>
@@ -14,6 +14,12 @@ function CartItemRow({ item, removeFromCart }) {
             </td>
             <td>
                 <Text>{item.nombre}</Text>
+                {/* Mostramos la talla para diferenciar items iguales con distinta talla */}
+                {item.selectedTallaNombre && (
+                    <small className="text-muted">
+                        Talla: {item.selectedTallaNombre}
+                    </small>
+                )}
             </td>
             <td>
                 <Text>${item.precio.toLocaleString('es-CL')}</Text>
@@ -22,7 +28,9 @@ function CartItemRow({ item, removeFromCart }) {
                 <BootstrapButton 
                     variant="outline-danger" 
                     size="sm"
-                    onClick={() => removeFromCart(item.id)}>
+                    // Al hacer click, ejecutamos la función que nos pasó el padre (Carrito.jsx)
+                    // la cual ya sabe qué ID borrar.
+                    onClick={removeFromCart}>
                     Eliminar
                 </BootstrapButton>
             </td>
