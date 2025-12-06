@@ -10,11 +10,14 @@ import Contacto from './pages/Contacto.jsx';
 import Login from './pages/Login.jsx';
 import Registro from './pages/Registro.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
-import { ProtectedRouteAdmin } from './components/ProtectedRoute.jsx';
+import { ProtectedRouteAdmin, ProtectedRouteUser } from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AdminManageProducts from './pages/admin/AdminManageProducts.jsx';
 import AdminViewOrders from './pages/admin/AdminViewOrders.jsx';
 import { CartProvider } from './context/CartContext.jsx'; 
+import MisCompras from './pages/MisCompras.jsx'; 
+
+
 
 function App() {
   return (
@@ -35,6 +38,12 @@ function App() {
             
             <Route path="/carrito" element={<Carrito />} />
 
+            {/* --- RUTAS PROTEGIDAS DE USUARIO --- */}
+            <Route element={<ProtectedRouteUser />}>
+               <Route path="/mis-compras" element={<MisCompras />} />
+            </Route>
+
+            {/* --- RUTAS PROTEGIDAS DE ADMIN --- */}
             <Route path="/admin" element={<ProtectedRouteAdmin />}>
               <Route index element={<AdminDashboard />} /> 
               <Route path="productos" element={<AdminManageProducts />} /> 

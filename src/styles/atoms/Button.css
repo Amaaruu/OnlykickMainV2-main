@@ -1,15 +1,26 @@
 .custom-btn {
     background-color: #343a40; 
     color: white;
-    border: 1px solid #343a40;
-    padding: 0.5rem 1rem;
+    border: 1px solid transparent;
+    
+    /* IMPORTANTE: Padding estándar para que 'btn-sm' funcione bien al sumarse */
+    padding: 0.375rem 0.75rem; 
+    
     border-radius: 0.25rem;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-decoration: none; /* Asegura que no tenga subrayado si está dentro de un Link */
+    display: inline-block; /* Para comportarse bien con márgenes */
 }
 
 .custom-btn:hover {
-    background-color: #23272b;
-    border-color: #1d2124;
+    opacity: 0.9;
+}
+
+.custom-btn.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }

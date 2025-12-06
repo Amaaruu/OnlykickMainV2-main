@@ -1,13 +1,16 @@
 import React from 'react';
 import '../../styles/atoms/Button.css';
 
-// Este componente es un atomo.
-// Solo sabe como renderizar un boton y qur hacer cuando se le hace clic.
-function Button({ onClick, children, variant = 'dark' }) {
-    const className = `custom-btn btn-${variant}`;
+function Button({ onClick, children, variant = 'dark', className = '', ...props }) {
+    // Combinamos las clases: la base personalizada + la variante de bootstrap + las que vengan de fuera
+    const finalClassName = `custom-btn btn-${variant} ${className}`;
 
     return (
-        <button className={className} onClick={onClick}>
+        <button 
+            className={finalClassName.trim()} 
+            onClick={onClick}
+            {...props} 
+        >
             {children}
         </button>
     );

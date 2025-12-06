@@ -1,0 +1,19 @@
+.mis-compras-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.status-badge {
+    padding: 0.4em 0.8em;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+.status-pendiente { background-color: #ffc107; color: #000; }
+.status-enviado { background-color: #17a2b8; }
+.status-entregado, .status-completado { background-color: #28a745; }
+.status-cancelado { background-color: #dc3545; }
