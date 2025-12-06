@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Form, Button, Row, Col, Alert, Badge } from 'react-bootstrap';
 import { apiCall } from '../../services/api';
+import '../../styles/molecules/AdminInventario.css';
 
 function AdminInventario({ idProducto }) {
     const [inventario, setInventario] = useState([]);
