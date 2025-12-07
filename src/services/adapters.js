@@ -3,19 +3,19 @@
  * @param {object} productoBackend - Objeto Producto recibido del Spring Boot API.
  */
 export const adaptarProducto = (productoBackend) => {
-  // Nota: Tu backend devuelve un array de objetos 'Imagen'. 
-  // Tomamos la URL del primer objeto Imagen, o usamos una por defecto.
   const imagenPrincipal = 
     productoBackend.imagenes && Array.isArray(productoBackend.imagenes) && productoBackend.imagenes.length > 0 
       ? productoBackend.imagenes[0].urlImagen 
-      : '/img/zapatilla-default.webp'; // Imagen por defecto si no hay
+      : '/img/zapatilla-default.webp';
 
   return {
-    id: productoBackend.idProducto,          // Mapea idProducto a id
-    nombre: productoBackend.nombreProducto,  // Mapea nombreProducto a nombre
-    // BigDecimal de Java se maneja como String/Number en JS
-    precio: productoBackend.precioBase,      // Mapea precioBase a precio 
+    id: productoBackend.idProducto,          
+    nombre: productoBackend.nombreProducto,  
+    precio: productoBackend.precioBase,      
     descripcion: productoBackend.descripcion,
-    imagen: imagenPrincipal,                 // Mapea el array a una sola URL
+    imagen: imagenPrincipal,                 
+    // --- NUEVOS CAMPOS PARA LA TARJETA ---
+    marca: productoBackend.marca ? productoBackend.marca.nombreMarca : 'OnlyKick',
+    categoria: productoBackend.categoria ? productoBackend.categoria.nombreCategoria : 'Calzado'
   };
 };
