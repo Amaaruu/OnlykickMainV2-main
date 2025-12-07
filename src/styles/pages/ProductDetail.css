@@ -1,22 +1,31 @@
+/* Sombra y bordes suaves para la imagen */
 .product-detail-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
 }
 
-.product-detail-info h2 {
-    font-weight: 700;
-    font-size: 2.5rem;
+.product-detail-image:hover {
+    transform: scale(1.02);
 }
 
-.product-detail-info .lead {
-    color: #6c757d;
-    font-size: 1.1rem;
+/* Contenedor de la información */
+.product-detail-info {
+    padding-left: 2rem;
 }
 
+/* Precio destacado */
 .product-detail-price {
-    font-size: 2.8rem;
-    font-weight: bold;
-    color: #d9534f;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #dc3545; /* Rojo Bootstrap */
+    letter-spacing: -1px;
+}
+
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+    .product-detail-info {
+        padding-left: 0;
+        text-align: center;
+    }
 }

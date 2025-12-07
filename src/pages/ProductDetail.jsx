@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Image, Button, Alert, Spinner, Form } from 'react-bootstrap';
+import { Container, Row, Col, Image, Alert, Spinner, Form } from 'react-bootstrap';
+import Button from '../components/atoms/Button'; 
 import { useParams } from 'react-router-dom';
 import { apiCall } from '../services/api';
 import { adaptarProducto } from '../services/adapters';
@@ -12,7 +13,7 @@ function ProductDetail() {
   const [tallasDisponibles, setTallasDisponibles] = useState([]);
   const [selectedInventarioId, setSelectedInventarioId] = useState('');
   
-  const { addToCart } = useCart(); // Obtener función del contexto
+  const { addToCart } = useCart(); 
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -53,21 +54,35 @@ function ProductDetail() {
     });
   };
 
-  if (loading) return <Spinner animation="border" />;
-  if (!producto) return <Alert variant="danger">Producto no encontrado</Alert>;
+  if (loading) return <Container className="my-5 text-center"><Spinner animation="border" /></Container>;
+  if (error || !producto) return <Container className="my-5"><Alert variant="danger">Producto no encontrado</Alert></Container>;
 
   return (
     <Container className="my-5">
-      <Row>
-        <Col md={6}><Image src={producto.imagen} fluid /></Col>
-        <Col md={6}>
-          <h2>{producto.nombre}</h2>
-          <h3 className="text-danger">${producto.precio.toLocaleString('es-CL')}</h3>
+      <Row className="align-items-center">
+        <Col md={6} className="mb-4 mb-md-0">
+            <Image src={producto.imagen} fluid className="product-detail-image" />
+        </Col>
+        
+        <Col md={6} className="product-detail-info">
+          <h2 className="display-5 fw-bold mb-3">{producto.nombre}</h2>
           
-          <Form.Group className="my-4">
-            <Form.Label>Selecciona Talla:</Form.Label>
-            <Form.Select onChange={(e) => setSelectedInventarioId(e.target.value)}>
-                <option value="">-- Seleccionar --</option>
+          <div className="product-detail-price mb-3">
+            ${producto.precio.toLocaleString('es-CL')}
+          </div>
+          
+          <p className="lead text-muted mb-4">
+            {producto.descripcion || "Sin descripción disponible."}
+          </p>
+          
+          <Form.Group className="my-4 p-3 bg-light rounded">
+            <Form.Label className="fw-bold">Selecciona tu Talla:</Form.Label>
+            <Form.Select 
+                size="lg"
+                value={selectedInventarioId}
+                onChange={(e) => setSelectedInventarioId(e.target.value)}
+            >
+                <option value="">-- Elige una opción --</option>
                 {tallasDisponibles.map(inv => (
                     <option key={inv.id_inventario} value={inv.id_inventario}>
                         Talla {inv.talla.valorTalla} ({inv.color.nombreColor})
@@ -76,9 +91,16 @@ function ProductDetail() {
             </Form.Select>
           </Form.Group>
 
-          <Button variant="danger" size="lg" onClick={handleAddToCart} disabled={tallasDisponibles.length === 0}>
-            {tallasDisponibles.length === 0 ? "Sin Stock" : "Añadir al Carrito"}
-          </Button>
+          <div className="d-grid gap-2">
+            <Button 
+                variant="danger" 
+                className="py-3 fs-5" 
+                onClick={handleAddToCart} 
+                disabled={tallasDisponibles.length === 0}
+            >
+                {tallasDisponibles.length === 0 ? "Agotado" : "Añadir al Carrito 🛒"}
+            </Button>
+          </div>
         </Col>
       </Row>
     </Container>
