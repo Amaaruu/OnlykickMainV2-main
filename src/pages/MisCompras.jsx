@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Alert, Spinner, Button, Badge } from 'react-bootstrap';
+import { Container, Table, Alert, Spinner, Button, Badge, Card, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { apiCall } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import Image from '../components/atoms/Image'; // Reutilizamos tu átomo
 import '../styles/pages/MisCompras.css';
 
 function MisCompras() {
@@ -20,15 +21,17 @@ function MisCompras() {
     const fetchMisCompras = async () => {
         setLoading(true);
         try {
-            // Llamamos al endpoint del backend que filtra por ID de usuario
-            const data = await apiCall(`/ventas/usuario/${user.idUsuario}`);
+            // CAMBIO CLAVE: Ahora llamamos al endpoint de USUARIOS, no de ventas.
+            // El backend devuelve el UsuarioDTO que contiene "historialCompras" con los ITEMS detallados.
+            const userData = await apiCall(`/usuarios/${user.idUsuario}`);
             
-            // Ordenamos: La más reciente primero (ID descendente)
-            const sortedData = Array.isArray(data) 
-                ? data.sort((a, b) => b.idVenta - a.idVenta) 
-                : [];
-            
-            setCompras(sortedData);
+            if (userData && userData.historialCompras) {
+                // Ordenamos: La más reciente primero
+                const sortedData = userData.historialCompras.sort((a, b) => b.idVenta - a.idVenta);
+                setCompras(sortedData);
+            } else {
+                setCompras([]);
+            }
         } catch (err) {
             console.error("Error cargando compras:", err);
             setError("No pudimos cargar tu historial. Intenta más tarde.");
@@ -38,29 +41,22 @@ function MisCompras() {
     };
 
     // Helper para el color del estado
-    const getStatusClass = (estado) => {
+    const getStatusVariant = (estado) => {
         const est = estado?.toLowerCase() || '';
-        if (est.includes('pendiente')) return 'status-pendiente';
-        if (est.includes('enviado')) return 'status-enviado';
-        if (est.includes('entregado') || est.includes('completado')) return 'status-completado';
-        if (est.includes('cancelado')) return 'status-cancelado';
-        return 'bg-secondary';
+        if (est.includes('pendiente')) return 'warning';
+        if (est.includes('enviado')) return 'info';
+        if (est.includes('entregado') || est.includes('completado')) return 'success';
+        if (est.includes('cancelado')) return 'danger';
+        return 'secondary';
     };
 
-    if (!isAuthenticated) {
-        return (
-            <Container className="my-5 text-center">
-                <Alert variant="warning">Debes iniciar sesión para ver tus compras.</Alert>
-                <Link to="/login"><Button variant="dark">Ir al Login</Button></Link>
-            </Container>
-        );
-    }
+    if (!isAuthenticated) return null; // O redirigir
 
     if (loading) return <Container className="my-5 text-center"><Spinner animation="border" /></Container>;
 
     return (
         <Container className="my-5">
-            <h2 className="mb-4 text-center fw-bold">Historial de Compras</h2>
+            <h2 className="mb-4 text-center fw-bold">Mis Pedidos</h2>
 
             {error && <Alert variant="danger">{error}</Alert>}
 
@@ -73,42 +69,68 @@ function MisCompras() {
                     </Link>
                 </div>
             ) : (
-                <div className="mis-compras-container">
-                    <Table responsive hover className="align-middle">
-                        <thead className="table-light">
-                            <tr>
-                                <th># Orden</th>
-                                <th>Fecha</th>
-                                <th>Método Pago</th>
-                                <th>Envío</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {compras.map((venta) => (
-                                <tr key={venta.idVenta}>
-                                    <td className="fw-bold">#{venta.idVenta}</td>
-                                    <td>
-                                        {new Date(venta.fechaVenta).toLocaleDateString('es-CL')} <br/>
-                                        <small className="text-muted">
-                                            {new Date(venta.fechaVenta).toLocaleTimeString('es-CL', {hour: '2-digit', minute:'2-digit'})}
-                                        </small>
-                                    </td>
-                                    <td>{venta.metodoPago?.nombreMetodo || '-'}</td>
-                                    <td>{venta.metodoEnvio?.nombreMetodo || '-'}</td>
-                                    <td className="fw-bold text-success">
-                                        ${venta.totalVenta?.toLocaleString('es-CL')}
-                                    </td>
-                                    <td>
-                                        <span className={`status-badge ${getStatusClass(venta.estadoVenta?.nombreEstado)}`}>
-                                            {venta.estadoVenta?.nombreEstado || 'Desconocido'}
+                <div className="d-flex flex-column gap-4">
+                    {compras.map((venta) => (
+                        <Card key={venta.idVenta} className="shadow-sm border-0 overflow-hidden">
+                            <Card.Header className="bg-white border-bottom py-3">
+                                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div>
+                                        <span className="text-muted small text-uppercase">Pedido realizado el</span><br/>
+                                        <strong>{new Date(venta.fecha).toLocaleDateString('es-CL')}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-muted small text-uppercase">Total</span><br/>
+                                        <strong>${venta.total?.toLocaleString('es-CL')}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-muted small text-uppercase">Enviado a</span><br/>
+                                        <span className="text-truncate d-inline-block" style={{maxWidth: '200px'}}>
+                                            {venta.direccion || 'Dirección no disponible'}
                                         </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                                    </div>
+                                    <div className="text-end">
+                                        <span className="text-muted small text-uppercase">Pedido # {venta.idVenta}</span><br/>
+                                        <Badge bg={getStatusVariant(venta.estado)}>{venta.estado}</Badge>
+                                    </div>
+                                </div>
+                            </Card.Header>
+                            <Card.Body>
+                                {venta.items && venta.items.length > 0 ? (
+                                    venta.items.map((item, index) => (
+                                        <Row key={index} className="align-items-center mb-3 g-3">
+                                            <Col xs={3} sm={2} md={1}>
+                                                {/* Usamos tu átomo de imagen */}
+                                                <Image 
+                                                    src={item.urlImagen || "/img/zapatilla-default.webp"} 
+                                                    alt={item.nombreProducto}
+                                                    className="rounded"
+                                                    style={{ width: '100%', height: '80px', objectFit: 'contain' }} 
+                                                />
+                                            </Col>
+                                            <Col xs={9} sm={10} md={11}>
+                                                <h6 className="mb-1 fw-bold">{item.nombreProducto}</h6>
+                                                <p className="mb-0 text-muted small">
+                                                    {item.marca} | Talla: {item.talla} | Color: {item.color}
+                                                </p>
+                                                <div className="mt-1">
+                                                    <Badge bg="light" text="dark" className="border me-2">
+                                                        Cant: {item.cantidad}
+                                                    </Badge>
+                                                    <span className="fw-bold text-danger">
+                                                        ${item.precioUnitario?.toLocaleString('es-CL')}
+                                                    </span>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    ))
+                                ) : (
+                                    <Alert variant="warning" className="m-0">
+                                        No se encontraron detalles de los productos para este pedido.
+                                    </Alert>
+                                )}
+                            </Card.Body>
+                        </Card>
+                    ))}
                 </div>
             )}
         </Container>
