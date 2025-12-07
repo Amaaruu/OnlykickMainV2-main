@@ -40,11 +40,11 @@ function NavBar() {
           <Nav className="align-items-center">
             {isAuthenticated ? (
               <>
+                {/* CAMBIO AQUÍ: user.nombre en lugar de user.nombreUsuario */}
                 <span className="me-3 mb-2 mb-lg-0 fw-bold text-nowrap">
-                  Hola, {user.nombreUsuario}
+                  Hola, {user.nombre || user.nombreUsuario} 
                 </span>
                 
-                {/* BOTÓN MIS COMPRAS (Ahora usa tu átomo) */}
                 <Link to="/mis-compras" className="text-decoration-none">
                     <Button 
                         variant="dark" 
@@ -54,10 +54,9 @@ function NavBar() {
                     </Button>
                 </Link>
 
-                {/* BOTÓN CERRAR SESIÓN (Ahora usa tu átomo) */}
                 <Button 
-                  variant="dark" // Mismo color (negro)
-                  className="btn-sm me-2 mb-2 mb-lg-0" // Mismo tamaño
+                  variant="dark" 
+                  className="btn-sm me-2 mb-2 mb-lg-0" 
                   onClick={handleLogout} 
                 >
                   Cerrar Sesión
@@ -78,11 +77,10 @@ function NavBar() {
               </>
             )}
             
-            {/* BOTÓN CARRITO */}
             <Link to="/carrito" style={{ textDecoration: 'none' }}>
               <Button 
-                  variant="dark" // Mismo color
-                  className="btn-sm d-flex align-items-center gap-1 mb-2 mb-lg-0" // Mismo tamaño
+                  variant="dark" 
+                  className="btn-sm d-flex align-items-center gap-1 mb-2 mb-lg-0"
               >
                   <span>🛒</span> Carrito ({cartCount})
               </Button>

@@ -5,12 +5,11 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/pages/admin/AdminDashboard.css';
 
 function AdminDashboard() {
-  const { user: currentUser } = useAuth(); // Para no borrarnos a nosotros mismos
+  const { user: currentUser } = useAuth(); 
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cargar usuarios al iniciar
   useEffect(() => {
     fetchUsuarios();
   }, []);
@@ -19,7 +18,6 @@ function AdminDashboard() {
     try {
       setLoading(true);
       const data = await apiCall('/usuarios');
-      // Ordenamos por ID
       setUsuarios(data.sort((a, b) => a.idUsuario - b.idUsuario));
     } catch (err) {
       console.error(err);
@@ -29,14 +27,13 @@ function AdminDashboard() {
     }
   };
 
-  // Función para cambiar rol (Admin <-> User)
   const toggleRole = async (usuario) => {
     const nuevoRol = usuario.rol === 'admin' ? 'user' : 'admin';
-    if (!window.confirm(`¿Cambiar rol de ${usuario.nombreUsuario} a ${nuevoRol.toUpperCase()}?`)) return;
+    // CAMBIO AQUÍ: usuario.nombre
+    if (!window.confirm(`¿Cambiar rol de ${usuario.nombre} a ${nuevoRol.toUpperCase()}?`)) return;
 
     try {
       await apiCall(`/usuarios/${usuario.idUsuario}`, 'PATCH', { rol: nuevoRol });
-      // Actualizamos la lista localmente para reflejar el cambio rápido
       setUsuarios(prev => prev.map(u => 
         u.idUsuario === usuario.idUsuario ? { ...u, rol: nuevoRol } : u
       ));
@@ -45,7 +42,6 @@ function AdminDashboard() {
     }
   };
 
-  // Función para eliminar usuario
   const handleDelete = async (id) => {
     if (!window.confirm('¿Estás seguro de eliminar este usuario? Se borrarán también sus compras.')) return;
 
@@ -75,7 +71,7 @@ function AdminDashboard() {
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
-            <th>Fecha Registro</th>
+            {/* Quitamos fecha registro porque el DTO a veces no la trae si no se mapeó, o puedes agregarla al DTO */}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -83,16 +79,15 @@ function AdminDashboard() {
           {usuarios.map((u) => (
             <tr key={u.idUsuario}>
               <td>{u.idUsuario}</td>
-              <td>{u.nombreUsuario}</td>
+              {/* CAMBIO AQUÍ: u.nombre en lugar de u.nombreUsuario */}
+              <td>{u.nombre}</td>
               <td>{u.email}</td>
               <td>
                 <Badge bg={u.rol === 'admin' ? 'danger' : 'primary'}>
                   {u.rol ? u.rol.toUpperCase() : 'USER'}
                 </Badge>
               </td>
-              <td>{new Date(u.fechaCreacion).toLocaleDateString()}</td>
               <td>
-                {/* No permitir borrarse ni editarse a uno mismo */}
                 {u.email !== currentUser.email && (
                   <div className="d-flex gap-2">
                     <Button 
