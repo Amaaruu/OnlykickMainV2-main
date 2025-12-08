@@ -3,7 +3,7 @@ import { Container, Table, Alert, Spinner, Button, Badge, Card, Row, Col } from 
 import { Link } from 'react-router-dom';
 import { apiCall } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import Image from '../components/atoms/Image'; // Reutilizamos tu átomo
+import Image from '../components/atoms/Image';
 import '../styles/pages/MisCompras.css';
 
 function MisCompras() {
